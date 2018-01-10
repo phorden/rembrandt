@@ -11,6 +11,8 @@ class CanvasDraw extends React.Component {
         this.state = {
     		assets_loaded: false,
     		mousedown_pos: null,
+    		strokeWidth: "3px",
+    		strokeColor: "#00CC99"
     	};
     }
 	componentWillMount() {
@@ -53,6 +55,11 @@ class CanvasDraw extends React.Component {
 	track_canvas_move = ( e ) => {
 		var mousePosUnconstrained = this.get_mouse_pos_for_action(e, false);
 		var mousePos = this.get_mouse_pos_for_action(e, true);
+		
+		this.ctx.lineTo(mousePos.x, mousePos.y);
+    	this.ctx.stroke();
+    	
+    	console.log("mouse pos move:", mousePos.x, mousePos.y);
 
 		//basically here you'd do something with the new mousePos when you're moving the mouse
 	}
@@ -63,8 +70,20 @@ class CanvasDraw extends React.Component {
 
 	handle_canvas_click = ( e ) => {
 		var mousePos = this.get_mouse_pos_for_action(e, true);
-
-		//this is where you'd do something with myFunc(mousePos.x, mousePos.y );
+		
+		this.ctx.lineWidth = this.state.strokeWidth;
+		this.ctx.lineJoin = 'round';
+		this.ctx.lineCap = 'round';
+		// ctx.strokeStyle = '#00CC99';
+		this.ctx.strokeStyle = this.state.strokeColor;
+		
+		console.log("settings:", this.state.strokeWidth, this.state.strokeColor);
+		
+		this.ctx.beginPath();
+		
+		console.log("mouse pos:", mousePos.x, mousePos.y);
+		
+		this.ctx.moveTo(mousePos.x, mousePos.y);
 
 		// in this function, you just figure out what operation you're actually going to do, and then you setState() that that operation is in progress.
 		// over in track_canvas_move is where you have a big if-elseif chain that keys on what operation is actually being done, and it then handles all the logic of doing the actual drawing.
@@ -117,8 +136,8 @@ class CanvasDraw extends React.Component {
 		document.removeEventListener ('mousemove', this.mousemoveListener, {capture: true});
 		e.stopPropagation ();
 
-		this.set_secondary_operation_mode(null);
-		this.set_operation_grabber_index(null);
+		// this.set_secondary_operation_mode(null);
+		// this.set_operation_grabber_index(null);
 		this.setState({mousedown_pos: null});
 	}
 
@@ -153,7 +172,7 @@ class CanvasDraw extends React.Component {
 			>
 
 
-				<div className="canvas-container">
+				<div className="canvas-container" ref={ node => this.canvasContainer = node } >
 					<canvas ref={(node) => {this.canvas = node;}} width="567" height="325"/>
 
 					<div
