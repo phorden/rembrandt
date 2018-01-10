@@ -11,7 +11,7 @@ class CanvasDraw extends React.Component {
         this.state = {
     		assets_loaded: false,
     		mousedown_pos: null,
-    		strokeWidth: "3px",
+    		strokeWidth: 3,
     		strokeColor: "#00CC99"
     	};
     }
@@ -26,6 +26,11 @@ class CanvasDraw extends React.Component {
 
 	componentDidMount() {
 		this.ctx = this.canvas.getContext("2d");
+		
+		this.ctx.lineWidth = this.state.strokeWidth;
+		this.ctx.lineJoin = 'round';
+		this.ctx.lineCap = 'round';
+		this.ctx.strokeStyle = this.state.strokeColor;
 	}
 
 	componentDidUpdate() {
@@ -55,12 +60,7 @@ class CanvasDraw extends React.Component {
 	track_canvas_move = ( e ) => {
 		var mousePosUnconstrained = this.get_mouse_pos_for_action(e, false);
 		var mousePos = this.get_mouse_pos_for_action(e, true);
-		
-		this.ctx.lineTo(mousePos.x, mousePos.y);
-    	this.ctx.stroke();
-    	
-    	console.log("mouse pos move:", mousePos.x, mousePos.y);
-
+	
 		//basically here you'd do something with the new mousePos when you're moving the mouse
 	}
 
@@ -71,18 +71,7 @@ class CanvasDraw extends React.Component {
 	handle_canvas_click = ( e ) => {
 		var mousePos = this.get_mouse_pos_for_action(e, true);
 		
-		this.ctx.lineWidth = this.state.strokeWidth;
-		this.ctx.lineJoin = 'round';
-		this.ctx.lineCap = 'round';
-		// ctx.strokeStyle = '#00CC99';
-		this.ctx.strokeStyle = this.state.strokeColor;
-		
-		console.log("settings:", this.state.strokeWidth, this.state.strokeColor);
-		
 		this.ctx.beginPath();
-		
-		console.log("mouse pos:", mousePos.x, mousePos.y);
-		
 		this.ctx.moveTo(mousePos.x, mousePos.y);
 
 		// in this function, you just figure out what operation you're actually going to do, and then you setState() that that operation is in progress.
@@ -97,7 +86,7 @@ class CanvasDraw extends React.Component {
 		const bgRectSrc = this.canvas.getBoundingClientRect();
 		const bgRect = { x: bgRectSrc.left, y: bgRectSrc.top, w: bgRectSrc.right - bgRectSrc.left, h: bgRectSrc.bottom - bgRectSrc.top };
 		const mousePos = (() => { if(e.nativeEvent !== undefined) {
-			return { x: e.nativeEvent.clientX - bgRect.x, y: e.nativeEvent.clientY - bgRect.y };
+;			return { x: e.nativeEvent.clientX - bgRect.x, y: e.nativeEvent.clientY - bgRect.y };
 		} else {
 			return { x: e.clientX - bgRect.x, y: e.clientY - bgRect.y };
 		}})();
@@ -118,6 +107,10 @@ class CanvasDraw extends React.Component {
 	mousedownListener = (e) => {
 		this.handle_canvas_click(e);
 		this.captureMouseEvents(e);
+		
+		this.ctx.lineTo(mousePos.x, mousePos.y);
+		// this.ctx.lineTo(20,20);
+    	this.ctx.stroke();
 	}
 
 	mousemoveListener = (e) => {
@@ -164,8 +157,7 @@ class CanvasDraw extends React.Component {
 		return (
 			<div className="ui-segment-container canvas-editor-container"
 				style={ {
-					height: this.props.expanded_ui ? '325px' : '0px',
-					transition: 'all 0.25s',
+					transition: 'all 0.25s'
 				}}
 
 

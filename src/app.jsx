@@ -1,6 +1,9 @@
 import React from 'react';
 import CanvasDraw from './components/canvas-draw/CanvasDraw.jsx';
 
+// main styles
+import './assets/scss/main.scss';
+
 
 export default class MyApp extends React.Component {
 	render() {
